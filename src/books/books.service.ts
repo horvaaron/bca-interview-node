@@ -29,7 +29,7 @@ export class BooksService {
     return book;
   }
 
-  async updateWithYear(): Promise<Book[]> {
+  async updateAllWithYear(): Promise<Book[]> {
     const books = await this.findAll();
     if (!books.length) throw new NotFoundException(`No books in database`);
 

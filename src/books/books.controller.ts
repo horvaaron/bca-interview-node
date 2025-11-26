@@ -13,7 +13,7 @@ export class BooksController {
 
   @Patch('update-all-with-year')
   updateAllWithYear(): Promise<Book[]> {
-    return this.booksService.updateWithYear();
+    return this.booksService.updateAllWithYear();
   }
 
   @Get(':id')
