@@ -11,6 +11,11 @@ export class BooksController {
     return this.booksService.findAll();
   }
 
+  @Patch('update-all-with-year')
+  updateAllWithYear(): Promise<Book[]> {
+    return this.booksService.updateWithYear();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.booksService.findOne(+id);

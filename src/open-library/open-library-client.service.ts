@@ -6,5 +6,9 @@ import { lastValueFrom } from 'rxjs';
 export class OpenLibraryClientService {
   constructor(private readonly httpService: HttpService) {}
 
-  async getBookDetails(workId: string): Promise<any> {}
+  async getBookDetails(workId: string): Promise<any> {
+    return await lastValueFrom(
+      this.httpService.get(`https://openlibrary.org/works/${workId}.json`),
+    );
+  }
 }
