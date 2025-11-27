@@ -34,21 +34,45 @@ export class BooksService {
     if (!books.length) throw new NotFoundException(`No books in database`);
 
     const upDatePromises = books.map(async (book) => {
-      const workId = book.workId;
-      return await this.openLibraryClientService
-        .getBookDetails(workId)
-        .then(async (bookDetail) => {
-          const firstPublishDate = bookDetail.data.first_publish_date;
-          if (!firstPublishDate) return;
-          const firstPublishYear = new Date(firstPublishDate).getFullYear();
-          if (!firstPublishYear) return;
-          // await this.bookRepository.update(book.id, { year: firstPublishYear });
-          book.year = firstPublishYear;
-          await book.save();
-          return book;
-        });
+      try {
+        const workId = book.workId;
+
+        return await this.openLibraryClientService
+          .getBookDetails(workId)
+          .then(async (bookDetail) => {
+            const firstPublishDate = bookDetail.data.first_publish_date;
+            if (!firstPublishDate) return;
+            const firstPublishYear = new Date(firstPublishDate).getFullYear();
+            if (Number.isNaN(firstPublishYear)) return;
+
+            book.year = firstPublishYear;
+            await book.save();
+            return book;
+          });
+      } catch (error) {
+        console.error(`Book ${book.id} have not been updated: `, error);
+      }
     });
+
     const results = await Promise.all(upDatePromises);
     return results.filter(Boolean) as Book[];
+  }
+
+  async findBookByCountry(country: string, from?: number): Promise<Book[]> {
+    const query = this.bookRepository
+      .createQueryBuilder('book')
+      .leftJoin('book.authors', 'author')
+      .where('author.country = :country', { country })
+      .orderBy('book.year', 'ASC');
+
+    if (from !== undefined) {
+      query.andWhere('book.year <= :from', { from });
+    }
+
+    const books = await query.getMany();
+    if (books.length === 0)
+      throw new NotFoundException(`No matching books found`);
+
+    return books;
   }
 }

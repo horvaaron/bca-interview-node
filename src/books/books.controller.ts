@@ -20,4 +20,9 @@ export class BooksController {
   findOne(@Param('id') id: string) {
     return this.booksService.findOne(+id);
   }
+
+  @Get('query/:country')
+  query(@Param('country') country: string, @Query('from') from: number) {
+    return this.booksService.findBookByCountry(country, from);
+  }
 }
