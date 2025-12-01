@@ -31,7 +31,9 @@ export class BooksService {
 
   async updateAllWithYear(): Promise<Book[]> {
     const books = await this.findAll();
-    if (!books.length) throw new NotFoundException(`No books in database`);
+    if (!books.length) {
+      throw new NotFoundException(`No books in database`);
+    }
 
     const upDatePromises = books.map(async (book) => {
       try {
@@ -70,8 +72,9 @@ export class BooksService {
     }
 
     const books = await query.getMany();
-    if (books.length === 0)
+    if (books.length === 0) {
       throw new NotFoundException(`No matching books found`);
+    }
 
     return books;
   }
