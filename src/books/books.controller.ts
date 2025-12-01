@@ -22,7 +22,11 @@ export class BooksController {
   }
 
   @Get('query/:country')
-  query(@Param('country') country: string, @Query('from') from: number) {
-    return this.booksService.findBookByCountry(country, from);
+  query(
+    @Param('country') country: string,
+    @Query('from') from: number,
+    @Query('to') to: number,
+  ) {
+    return this.booksService.findBookByCountry(country, from, to);
   }
 }
